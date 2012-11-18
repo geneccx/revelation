@@ -59,7 +59,7 @@
       <AdditionalDependencies>Shlwapi.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>cp "$(TargetPath)" "E:\Games\Warcraft III\$(TargetName).mixtape"</Command>
+      <Command>copy "$(TargetPath)" "E:\Games\Warcraft III\$(TargetName).mixtape"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copying to WC3 Folder</Message>
