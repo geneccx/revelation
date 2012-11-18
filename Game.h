@@ -1,8 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
-struct CGameWar3
-{
+struct CGameWar3 {
   DWORD PtrList;           //0x00
   DWORD _1[0x9];           //0x24
   WORD wPlayerSlot;        //0x28
@@ -15,8 +14,7 @@ struct CGameWar3
   DWORD dwpPlayerList[15]; //0x58
 };
 
-struct UnitInfo
-{
+struct UnitInfo {
   DWORD Ptr;             //0x0
   DWORD _1[3];           //0x4
   DWORD XTargetCoord;    //0x8 <- Not sure about these two, but they only appear when a unit is moving
@@ -27,8 +25,7 @@ struct UnitInfo
   DWORD MapY;            // 0x38
 };
 
-struct Unit
-{
+struct Unit {
   DWORD _1[3];         //0x00
   DWORD ID1;           //0xC
   DWORD ID2;           //0x10
@@ -38,13 +35,12 @@ struct Unit
   DWORD OwnerSlot;     //0x58
   BYTE _4[0x108];      //0x5C
   //1A0
-  UnitInfo Info;       //0x164            
+  UnitInfo Info;       //0x164
 };
 
-struct Action                                                    
-{
+struct Action {
   DWORD vtable;        //+00
-  BYTE* PacketData;    //+04
+  BYTE *PacketData;    //+04
   DWORD _1;            //+08, zero
   DWORD _2;            //+0C, ??
   DWORD Size;          //+10, size of PacketData
@@ -67,12 +63,12 @@ public:
   void TextOut(string str, DWORD aRGB = 0xFF22FF22, float fDuration = 7.5);
   void TextOut(boost::basic_format<char> fmt, DWORD aRGB = 0xFF22FF22, float fDuration = 7.5) { TextOut(fmt.str(), aRGB, fDuration); }
 
-  CGameWar3* GetCGameWar3();
-  DWORD GetGameTime() { return m_GameTime ? *(DWORD*)m_GameTime : 0;}
-  void* GetObjectFromIDs(DWORD id1, DWORD id2);
+  CGameWar3 *GetCGameWar3();
+  DWORD GetGameTime() { return m_GameTime ? *(DWORD *)m_GameTime : 0;}
+  void *GetObjectFromIDs(DWORD id1, DWORD id2);
   /*  Unit* GetUnitByIDs(DWORD id1, DWORD id2);*/
-  void* GetGameState();
-  HANDLE GetObjectHandle(void* obj);
+  void *GetGameState();
+  HANDLE GetObjectHandle(void *obj);
   DWORD GetPlayerColor(DWORD slot);
 
   static DWORD GetGameBase();
@@ -104,7 +100,7 @@ private:
   static HHOOK m_KeyboardHook;
   static HHOOK m_MessageHook;
 
-  vector<CPatch*> m_Patches;
+  vector<CPatch *> m_Patches;
   void AcquireOffsets();
   void ApplyPatches();
   void RemovePatches();

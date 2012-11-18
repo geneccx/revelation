@@ -9,17 +9,15 @@ public:
   cmd_jvars() : ModuleFactory("jvar") { }
 
 private:
-  virtual bool HandleCommand(string szPayload) const
-  {
-    if(!szPayload.empty()) {
-      JASSVar* jVar = GetJassVar(szPayload.c_str());
+  virtual bool HandleCommand(string szPayload) const {
+    if (!szPayload.empty()) {
+      JASSVar *jVar = GetJassVar(szPayload.c_str());
 
-      if(!jVar)
+      if (!jVar)
         g_Revelation->m_Game->PrintChat(format("Invalid JASS variable %s.") % szPayload, 0xFFFF0000);
-      else
-      {
+      else {
         string type;
-        switch(jVar->vartype) {
+        switch (jVar->vartype) {
         case 0:
           type = "void";
           break;
@@ -28,7 +26,7 @@ private:
           break;
         case 5:
           type = "real";
-          g_Revelation->m_Game->PrintChat(format("Found JASS variable %s %s - %.7f") % type % szPayload % *(float*)&jVar->value);
+          g_Revelation->m_Game->PrintChat(format("Found JASS variable %s %s - %.7f") % type % szPayload % * (float *)&jVar->value);
           return true;
         case 6:
           type = "string";

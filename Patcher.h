@@ -7,7 +7,7 @@ public:
   CPatch();
   ~CPatch();
 
-  CPatch(DWORD nOffset, BYTE* nData, DWORD nSize);
+  CPatch(DWORD nOffset, BYTE *nData, DWORD nSize);
 
   bool Apply();
   bool Remove();
@@ -16,8 +16,8 @@ public:
 
 private:
   DWORD m_Offset;
-  BYTE* m_NewData;
-  BYTE* m_OldData;
+  BYTE *m_NewData;
+  BYTE *m_OldData;
   DWORD m_Size;
   bool m_Applied;
   bool m_Valid;

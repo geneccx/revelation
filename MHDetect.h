@@ -1,25 +1,22 @@
 #ifndef MHDetect_h__
 #define MHDetect_h__
 
-struct CNetObjectInfo
-{
+struct CNetObjectInfo {
   DWORD ObjectID1;
   DWORD ObjectID2;
 };
 
-struct CNetCommandUnitSelectionModify
-{
+struct CNetCommandUnitSelectionModify {
   BYTE _1[0x15];
   BYTE playerNum;
   WORD _2;
   BYTE type;                        // 1 = select, 2 = deselect
   BYTE _3[0x7];
   DWORD selectedCount;
-  CNetObjectInfo* selectedUnits;
+  CNetObjectInfo *selectedUnits;
 };
 
-struct CNetCommandSelectableSelectionModify
-{
+struct CNetCommandSelectableSelectionModify {
   BYTE _1[0x15];
   BYTE playerNum;                    // 0x15
   WORD _2;                           // 0x16
@@ -28,6 +25,6 @@ struct CNetCommandSelectableSelectionModify
   CNetObjectInfo selectedSelectable; //0x1C
 };
 
-void __fastcall OnDispatchUnitSelectionModify(CNetCommandUnitSelectionModify* command);
-void __fastcall OnDispatchSelectableSelectionModify(CNetCommandSelectableSelectionModify* command);
+void __fastcall OnDispatchUnitSelectionModify(CNetCommandUnitSelectionModify *command);
+void __fastcall OnDispatchSelectableSelectionModify(CNetCommandSelectableSelectionModify *command);
 #endif // MHDetect_h__

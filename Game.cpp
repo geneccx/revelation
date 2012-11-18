@@ -7,13 +7,15 @@
 
 #define PATCH(a1, a2, a3)  m_Patches.push_back(new CPatch((m_GameBase + a1), (BYTE*)a2, a3))
 
-CGame::CGame(HMODULE hModule) : m_hModule(hModule) {
+CGame::CGame(HMODULE hModule) : m_hModule(hModule)
+{
   AcquireOffsets();
   ApplyPatches();
   ApplyHooks();
 }
 
-CGame::~CGame() {
+CGame::~CGame()
+{
   RemovePatches();
   RemoveHooks();
 
@@ -28,14 +30,15 @@ CGame::~CGame() {
 
   m_GameInstance       = NULL;
   m_GameTime           = NULL;
-  //m_GameUI           = NULL;
-  //m_WorldFrame       = NULL;
+  // m_GameUI           = NULL;
+  // m_WorldFrame       = NULL;
 }
 
-void CGame::AcquireOffsets() {
+void CGame::AcquireOffsets()
+{
   m_GameBase = GetGameBase();
 
-  if(!m_GameBase) {
+  if (!m_GameBase) {
     CRevelation::Log("[GAME] Could not get game base!");
     return;
   }
@@ -67,96 +70,105 @@ void CGame::AcquireOffsets() {
 // Game API
 //
 
-DWORD CGame::GetGameBase() {
+DWORD CGame::GetGameBase()
+{
   string DllName = "Game.dll";
   DWORD dwGameBase = (DWORD)GetModuleHandle(DllName.c_str());
 
   return dwGameBase ? dwGameBase : (DWORD)LoadLibrary(DllName.c_str());
 }
 
-DWORD CGame::GetGameUI() {
-  if(!m_GetPtrList)
+DWORD CGame::GetGameUI()
+{
+  if (!m_GetPtrList)
     return NULL;
 
   typedef DWORD GAME_GetPtrList_t();
-  static GAME_GetPtrList_t* GAME_GetPtrList = (GAME_GetPtrList_t*)m_GetPtrList;
+  static GAME_GetPtrList_t *GAME_GetPtrList = (GAME_GetPtrList_t *)m_GetPtrList;
 
   return GAME_GetPtrList();
 }
 
-void CGame::PrintChat(string str, DWORD aRGB, float fDuration) {
-  if(!m_PrintChat || !GetGameUI())
+void CGame::PrintChat(string str, DWORD aRGB, float fDuration)
+{
+  if (!m_PrintChat || !GetGameUI())
     return;
 
   class CSimpleMessageFrame { };
 
-  typedef void (__thiscall* GAME_PrintChat_t)(CSimpleMessageFrame*, const char*, DWORD*, float, int);
+  typedef void (__thiscall * GAME_PrintChat_t)(CSimpleMessageFrame *, const char *, DWORD *, float, int);
   static GAME_PrintChat_t GAME_PrintChat = reinterpret_cast<GAME_PrintChat_t>(m_PrintChat);
 
   //   messageFrame = *(CSimpleMessageFrame**)(GetGameUI() + 0x3EC);
   //   using namespace std::placeholders;
   //   auto f = bind(GAME_PrintChat, messageFrame, _1, _2, _3, _4);
   //   f(str.c_str(), &aRGB, fDuration, 0);
-  GAME_PrintChat(*(CSimpleMessageFrame**)(GetGameUI() + 0x3EC), str.c_str(), &aRGB, fDuration, 0);
+  GAME_PrintChat(*(CSimpleMessageFrame **)(GetGameUI() + 0x3EC), str.c_str(), &aRGB, fDuration, 0);
 }
 
-void CGame::TextOut(string str, DWORD aRGB, float fDuration) {
-  if(!m_TextOut)
+void CGame::TextOut(string str, DWORD aRGB, float fDuration)
+{
+  if (!m_TextOut)
     return;
 
-  typedef void (__thiscall* GAME_TextOut_t)(DWORD, const char*, float, DWORD);
+  typedef void (__thiscall * GAME_TextOut_t)(DWORD, const char *, float, DWORD);
   static GAME_TextOut_t GAME_TextOut = (GAME_TextOut_t)m_TextOut;
 
   GAME_TextOut(GetGameUI(), str.c_str(), fDuration, aRGB);
 }
 
-CGameWar3* CGame::GetCGameWar3() {
-  if(!m_GameInstance)
+CGameWar3 *CGame::GetCGameWar3()
+{
+  if (!m_GameInstance)
     return NULL;
 
-  return *(CGameWar3**)m_GameInstance;
+  return *(CGameWar3 **)m_GameInstance;
 }
 
-void* CGame::GetObjectFromIDs(DWORD id1, DWORD id2) {
-  if(!m_GetAgentFromIDs)
+void *CGame::GetObjectFromIDs(DWORD id1, DWORD id2)
+{
+  if (!m_GetAgentFromIDs)
     return NULL;
 
-  typedef DWORD (__fastcall* GAME_GetAgentFromIDs_t)(DWORD, DWORD);
+  typedef DWORD (__fastcall * GAME_GetAgentFromIDs_t)(DWORD, DWORD);
   static GAME_GetAgentFromIDs_t GAME_GetAgentFromIDs = (GAME_GetAgentFromIDs_t)m_GetAgentFromIDs;
 
   DWORD result = GAME_GetAgentFromIDs(id1, id2);
 
-  if(result && *(DWORD*)(result + 0xC) == 0x2B61676C)
-    return (void*)*(DWORD*)(result + 0x54);
+  if (result && *(DWORD *)(result + 0xC) == 0x2B61676C)
+    return (void *) * (DWORD *)(result + 0x54);
 
   return NULL;
 }
 
-void* CGame::GetGameState() {
-  if(!m_GetGameState)
+void *CGame::GetGameState()
+{
+  if (!m_GetGameState)
     return NULL;
 
-  typedef void* (__thiscall* GAME_GetGameState_t)(CGameWar3*);
+  typedef void* (__thiscall * GAME_GetGameState_t)(CGameWar3 *);
   static GAME_GetGameState_t GAME_GetGameState = (GAME_GetGameState_t)m_GetGameState;
 
   return GAME_GetGameState(GetCGameWar3());
 }
 
-HANDLE CGame::GetObjectHandle(void* obj) {
-  if(!m_GetObjectHandle)
+HANDLE CGame::GetObjectHandle(void *obj)
+{
+  if (!m_GetObjectHandle)
     return NULL;
 
-  typedef HANDLE (__thiscall* GAME_GetObjectHandle_t)(void*, void*, int);
+  typedef HANDLE (__thiscall * GAME_GetObjectHandle_t)(void *, void *, int);
   static GAME_GetObjectHandle_t GAME_GetObjectHandle = (GAME_GetObjectHandle_t)m_GetObjectHandle;
 
   return GAME_GetObjectHandle(GetGameState(), obj, 1);
 }
 
-DWORD CGame::GetPlayerColor(DWORD slot) {
-  if(!m_GetPlayerColor)
+DWORD CGame::GetPlayerColor(DWORD slot)
+{
+  if (!m_GetPlayerColor)
     return 0xFFFFFFFF;
 
-  typedef DWORD* (__fastcall* GAME_GetPlayerColor_t)(DWORD);
+  typedef DWORD* (__fastcall * GAME_GetPlayerColor_t)(DWORD);
   static GAME_GetPlayerColor_t GAME_GetPlayerColor = (GAME_GetPlayerColor_t)m_GetPlayerColor;
 
   return (slot > 12) ? 0xFFFFFFFF : *GAME_GetPlayerColor(slot);
@@ -166,7 +178,8 @@ DWORD CGame::GetPlayerColor(DWORD slot) {
 // Patch functions
 //
 
-void CGame::ApplyPatches() {
+void CGame::ApplyPatches()
+{
   //   PATCH(0x431556,  "\x3B\xC0\x0F\x85\xC0\x00\x00\x00\x8D\x8B"
   //       "\xF0\x00\x00\x00\xE8\x07\x3D\x03\x00\x3B"
   //       "\xC0\x0F\x85\xAD\x00\x00\x00",27);    // Show pings
@@ -203,9 +216,10 @@ void CGame::ApplyPatches() {
   //  PATCH(0x39A3B9,"\xFF\x25\x6A\x5A\x45\x00",6); //Plant detour
 }
 
-void CGame::RemovePatches() {
-  for(vector<CPatch *>::iterator i = m_Patches.begin(); i != m_Patches.end(); i++) {
-    if((*i)->Applied())
+void CGame::RemovePatches()
+{
+  for (vector<CPatch *>::iterator i = m_Patches.begin(); i != m_Patches.end(); i++) {
+    if ((*i)->Applied())
       (*i)->Remove();
 
     delete (*i);
@@ -222,22 +236,23 @@ CDetour DispatchUnitSelectionModifyDet;
 CDetour DispatchSelectableSelectionModifyDet;
 
 void OnGameStart();
-bool __fastcall OnGameCommand(DWORD, DWORD, char*);
+bool __fastcall OnGameCommand(DWORD, DWORD, char *);
 
-void CGame::ApplyHooks() {
-  GameStartDet.Detour((BYTE*)m_HookGameStart, (BYTE*)OnGameStart, true);
+void CGame::ApplyHooks()
+{
+  GameStartDet.Detour((BYTE *)m_HookGameStart, (BYTE *)OnGameStart, true);
   GameStartDet.Apply();
 
 #ifdef _DEBUG
-  GameChatDet.Detour((BYTE*)m_HookGameCommand, (BYTE*)OnGameCommand, true);
+  GameChatDet.Detour((BYTE *)m_HookGameCommand, (BYTE *)OnGameCommand, true);
   GameChatDet.Apply();
 #endif
 
-  DispatchUnitSelectionModifyDet.Detour((BYTE*)m_HookDispatchUnitSelectionModify, (BYTE*)OnDispatchUnitSelectionModify, true);
+  DispatchUnitSelectionModifyDet.Detour((BYTE *)m_HookDispatchUnitSelectionModify, (BYTE *)OnDispatchUnitSelectionModify, true);
   DispatchUnitSelectionModifyDet.Apply();
 
-  DispatchSelectableSelectionModifyDet.Detour((BYTE*)m_HookDispatchSelectableSelectionModify, (BYTE*)OnDispatchSelectableSelectionModify, true);
-  DispatchSelectableSelectionModifyDet.Apply();  
+  DispatchSelectableSelectionModifyDet.Detour((BYTE *)m_HookDispatchSelectableSelectionModify, (BYTE *)OnDispatchSelectableSelectionModify, true);
+  DispatchSelectableSelectionModifyDet.Apply();
 
 #ifdef _DEBUG
   m_KeyboardHook = SetWindowsHookEx(WH_KEYBOARD, KeyboardProc, m_hModule, GetCurrentThreadId());
@@ -245,29 +260,31 @@ void CGame::ApplyHooks() {
 #endif
 }
 
-void CGame::RemoveHooks() {
-  if(GameStartDet.Applied())
+void CGame::RemoveHooks()
+{
+  if (GameStartDet.Applied())
     GameStartDet.Remove();
 
-  if(GameChatDet.Applied())
+  if (GameChatDet.Applied())
     GameChatDet.Remove();
 
-  if(DispatchUnitSelectionModifyDet.Applied())
+  if (DispatchUnitSelectionModifyDet.Applied())
     DispatchUnitSelectionModifyDet.Remove();
 
-  if(DispatchSelectableSelectionModifyDet.Applied())
+  if (DispatchSelectableSelectionModifyDet.Applied())
     DispatchSelectableSelectionModifyDet.Remove();
 
-  if(m_KeyboardHook)
+  if (m_KeyboardHook)
     UnhookWindowsHookEx(m_KeyboardHook);
 
-  if(m_MessageHook)
+  if (m_MessageHook)
     UnhookWindowsHookEx(m_MessageHook);
 }
 
 DWORD g_dwUnloadRetAddr = 0;
 
-void CGame::UnloadProc() {
+void CGame::UnloadProc()
+{
   asm(
     "push %0;"
     "push %1;"
@@ -280,27 +297,27 @@ void CGame::UnloadProc() {
 // Hook Callbacks
 //
 
-bool __fastcall OnGameCommand(DWORD _ecx, DWORD _edx, char* nText) {
+bool __fastcall OnGameCommand(DWORD _ecx, DWORD _edx, char *nText)
+{
   bool bRet = true;
   string Message = string(nText);
 
-  if(!Message.empty() && Message[0] == '/') {
+  if (!Message.empty() && Message[0] == '/') {
     string szCommand;
     string szPayload;
     string::size_type PayloadStart = Message.find(" ");
 
-    if(PayloadStart != string::npos) {
+    if (PayloadStart != string::npos) {
       szCommand = Message.substr(1, PayloadStart - 1);
       szPayload = Message.substr(PayloadStart + 1);
-    }
-    else
+    } else
       szCommand = Message.substr(1);
 
-    transform(szCommand.begin(), szCommand.end(), szCommand.begin(), (int(*)(int))tolower);
+    transform(szCommand.begin(), szCommand.end(), szCommand.begin(), (int( *)(int))tolower);
 
-    if(szCommand == "unload") {
+    if (szCommand == "unload") {
       g_dwUnloadRetAddr = (DWORD)GameChatDet.GetGateRetAddress();
-      GameChatDet.SetGateRetAddress((BYTE*)&CGame::UnloadProc);
+      GameChatDet.SetGateRetAddress((BYTE *)&CGame::UnloadProc);
       g_Revelation->m_Game->TextOut("Revelation unloaded.", 0xFFFF0000);
       GameChatDet.Ret(false);
       return true;
@@ -313,27 +330,30 @@ bool __fastcall OnGameCommand(DWORD _ecx, DWORD _edx, char* nText) {
   return !bRet;
 }
 
-void OnGameStart() {
+void OnGameStart()
+{
 #include "JASS.h"
   g_Revelation->m_Game->TextOut(/*"Revelation v1.0 by Zephyrix is active."); */
-    XorStr<0x4F,39,0x675FA9CA>("\x1D\x35\x27\x37\x3F\x35\x21\x3F\x38\x36\x79\x2C\x6A\x72\x6D\x7E\x3D\x19\x41\x38\x06\x14\x0D\x1F\x15\x01\x11\x4A\x02\x1F\x4D\x0F\x0C\x04\x18\x04\x16\x5A"+0x675FA9CA).s);
+    XorStr<0x4F, 39, 0x675FA9CA>("\x1D\x35\x27\x37\x3F\x35\x21\x3F\x38\x36\x79\x2C\x6A\x72\x6D\x7E\x3D\x19\x41\x38\x06\x14\x0D\x1F\x15\x01\x11\x4A\x02\x1F\x4D\x0F\x0C\x04\x18\x04\x16\x5A" + 0x675FA9CA).s);
   CRevelation::Log("[GAME] Started a new game.");
 
   ModuleFactory::ExecuteOnGameStart();
 }
 
-LRESULT CALLBACK CGame::KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK CGame::KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
 #define IS_KEY_DOWN(lParam) ((lParam & ((DWORD)1<<30)) == 0 && (lParam & ((DWORD)1<<31)) == 0)
 
-  if(nCode == HC_ACTION && IS_KEY_DOWN(lParam)) {
-    if(ModuleFactory::ExecuteKeypress(lParam))
+  if (nCode == HC_ACTION && IS_KEY_DOWN(lParam)) {
+    if (ModuleFactory::ExecuteKeypress(lParam))
       return TRUE;
   }
 
   return CallNextHookEx(m_KeyboardHook, nCode, wParam, lParam);
 }
 
-LRESULT CALLBACK CGame::MessageProc(int nCode, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK CGame::MessageProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
   ModuleFactory::ExecuteUpdate(GetTickCount());
 
   return CallNextHookEx(m_MessageHook, nCode, wParam, lParam);

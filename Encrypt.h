@@ -4,17 +4,18 @@
 template <int XORSTART, int BUFLEN, int XREFKILLER>
 class XorStr
 {
-  private: 
-     XorStr();
-  public: 
-    char s[ BUFLEN ];
+private:
+  XorStr();
+public:
+  char s[ BUFLEN ];
 
-     XorStr( const char * xs );
-    ~XorStr() { for ( int i = 0; i < BUFLEN; i++ ) s[ i ]=0; }
+  XorStr( const char *xs );
+  ~XorStr() { for ( int i = 0; i < BUFLEN; i++ ) s[ i ] = 0; }
 };
 
 template <int XORSTART, int BUFLEN, int XREFKILLER>
-XorStr<XORSTART,BUFLEN,XREFKILLER>::XorStr( const char * xs ) {
+XorStr<XORSTART, BUFLEN, XREFKILLER>::XorStr( const char *xs )
+{
   int xvalue = XORSTART;
   int i = 0;
 

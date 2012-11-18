@@ -38,12 +38,12 @@ public:
   static void Log(string text);
   static void Log(boost::basic_format<char> fmt) { Log(fmt.str()); }
 
-  CGame* m_Game;
+  CGame *m_Game;
 
 private:
   static string m_LogFile;
   static bool m_LogInitialized;
 };
 
-extern CRevelation* g_Revelation;
+extern CRevelation *g_Revelation;
 #endif

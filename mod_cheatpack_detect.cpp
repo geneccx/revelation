@@ -9,10 +9,9 @@ public:
   mod_cheatpack_detect() : ModuleFactory() { }
 
 private:
-  virtual void OnGameStart() const
-  {
-    JASSVar* cheatpack = GetJassVar("Activator");
-    if(cheatpack) {
+  virtual void OnGameStart() const {
+    JASSVar *cheatpack = GetJassVar("Activator");
+    if (cheatpack) {
       g_Revelation->m_Game->PrintChat("Cheatpack enabled in this game!");
       g_Revelation->m_Game->PrintChat(format("Try: %s") % jStrGet((HANDLE)cheatpack->value));
     }

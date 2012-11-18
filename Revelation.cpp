@@ -4,39 +4,43 @@
 
 bool CRevelation::m_LogInitialized = false;
 
-void CRevelation::Log(string text) {
-  if(!m_LogInitialized) {
+void CRevelation::Log(string text)
+{
+  if (!m_LogInitialized) {
     m_LogFile = GetLogPath();
     m_LogInitialized = true;
     Log("[Revelation] Starting up.");
   }
 
-  if(!m_LogFile.empty()) {
+  if (!m_LogFile.empty()) {
     ofstream Log;
     Log.open(m_LogFile.c_str(), ios::app);
 
-    if(!Log.fail()) {
+    if (!Log.fail()) {
       Log << text << endl;
       Log.close();
     }
   }
 }
 
-CRevelation::CRevelation(HMODULE hModule) {
+CRevelation::CRevelation(HMODULE hModule)
+{
   m_Game = new CGame(hModule);
 
-  if(!m_Game)
+  if (!m_Game)
     Log("[Revelation] Failed to create CGame instance!");
 }
 
-CRevelation::~CRevelation() {
+CRevelation::~CRevelation()
+{
   Log("[Revelation] Shutting down.");
 
   delete m_Game;
   m_Game = NULL;
 }
 
-string CRevelation::GetLogPath() {
+string CRevelation::GetLogPath()
+{
   string g_szLocalPath;
   GetModuleFileName(GetModuleHandle(0), &g_szLocalPath[0], MAX_PATH);
   boost::filesystem::path p(g_szLocalPath);
