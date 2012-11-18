@@ -1,3 +1,6 @@
+*.o
 Debug/*
 Release/*
 *.vcxproj.*
+*.mixtape
+*.sublime*

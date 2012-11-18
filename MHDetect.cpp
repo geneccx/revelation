@@ -144,8 +144,10 @@ void __fastcall OnDispatchSelectableSelectionModify(CNetCommandSelectableSelecti
   }
 
   HANDLE hItem = g_Revelation->m_Game->GetObjectHandle(item);
-
-  if(jIsVisibleToPlayer(&jGetItemX(hItem).fl, &jGetItemY(hItem).fl, hPlayer))
+  float itemX = jGetItemX(hItem).fl;
+  float itemY = jGetItemY(hItem).fl;
+  
+  if(jIsVisibleToPlayer(&itemX, &itemY, hPlayer))
     return;
 
   string itemName = jStrGet(jGetItemName(hItem));

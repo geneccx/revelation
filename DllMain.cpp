@@ -5,7 +5,7 @@ CRevelation* g_Revelation;
 HMODULE g_hLocalModule;
 char g_szLocalPath[MAX_PATH] = { NULL };
 
-BOOL APIENTRY DllMain(HMODULE hDll, DWORD dwReason, LPVOID lpReserved) {
+extern "C" BOOL APIENTRY DllMain(HMODULE hDll, DWORD dwReason, LPVOID lpReserved) {
   if(dwReason == DLL_PROCESS_ATTACH) {
     g_hLocalModule = hDll;
 

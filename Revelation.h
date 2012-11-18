@@ -16,6 +16,7 @@
 #include <shlwapi.h>
 #include <boost/format.hpp>
 #include <boost/typeof/typeof.hpp>
+#include <boost/filesystem.hpp>
 
 using namespace std;
 using boost::format;

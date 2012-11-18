@@ -67,7 +67,7 @@ int CDetour::Removed(){
 }
 
 void CDetour::InitRand(){
-  srand(GetTickCount64());
+  srand(GetTickCount());
 }
 
 CDetour::CDetour(){

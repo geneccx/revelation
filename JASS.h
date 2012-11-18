@@ -80,9 +80,9 @@ typedef struct {
   int rettype;              //0x38
 } native_info;
 
-DWORD GetJassVM();
+DWORD GetJassVM(void);
 string jStrGet(HANDLE h);
-unsigned long getNumStrings();
+unsigned long getNumStrings(void);
 RCString* MapString(const char* s);
 
 void* GetJASSPtr(const char*);

@@ -266,13 +266,14 @@ void CGame::RemoveHooks() {
 }
 
 DWORD g_dwUnloadRetAddr = 0;
-void __declspec(naked) CGame::UnloadProc() {
-  __asm
-  {
-    push  CGame::m_hModule;
-    push  g_dwUnloadRetAddr;
-    jmp   dword ptr [FreeLibrary];
-  }
+
+void CGame::UnloadProc() {
+  asm(
+    "push %0;"
+    "push %1;"
+    "jmpl *%2;"
+    :: "r" (GetModuleHandle(0)), "m" (g_dwUnloadRetAddr), "m" (FreeLibrary)
+  );
 }
 
 //
@@ -299,7 +300,7 @@ bool __fastcall OnGameCommand(DWORD _ecx, DWORD _edx, char* nText) {
 
     if(szCommand == "unload") {
       g_dwUnloadRetAddr = (DWORD)GameChatDet.GetGateRetAddress();
-      GameChatDet.SetGateRetAddress((BYTE*)CGame::UnloadProc);
+      GameChatDet.SetGateRetAddress((BYTE*)&CGame::UnloadProc);
       g_Revelation->m_Game->TextOut("Revelation unloaded.", 0xFFFF0000);
       GameChatDet.Ret(false);
       return true;
@@ -333,7 +334,7 @@ LRESULT CALLBACK CGame::KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
 }
 
 LRESULT CALLBACK CGame::MessageProc(int nCode, WPARAM wParam, LPARAM lParam) {
-  ModuleFactory::ExecuteUpdate(timeGetTime());
+  ModuleFactory::ExecuteUpdate(GetTickCount());
 
   return CallNextHookEx(m_MessageHook, nCode, wParam, lParam);
 }

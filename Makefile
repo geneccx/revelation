@@ -1,34 +1,25 @@
-SHELL = /bin/sh
-SYSTEM = $(shell uname)
 C++ = clang++
-CC = clang
 DFLAGS = 
-LFLAGS = -L.
-CFLAGS = -O3 -ID:/libs/boost/ -Wall -g -shared -Wl,--subsystem,windows -DDLL
+LFLAGS = -L. -LD:/libs/boost/stage/lib -lboost_filesystem-mgw46-mt-1_51 -lboost_system-mgw46-mt-1_51
+CFLAGS = -O3 -ID:/libs/boost/
 
-OBJS = cmd_jvars.o cmd_strings.o Config.o DllMain.o Game.o JASS.o MHDetect.o mod_cheatpack_detect.o ModuleFactory.o Patcher.o Revelation.o
-PROGS = ./Revelation.mixtape
-
-all: $(OBJS) $(COBJS) $(PROGS)
+OBJS = cmd_jvars.o cmd_strings.o Config.o Detour/CDetour.o Detour/CDetourDis.o DllMain.o Game.o JASS.o MHDetect.o mod_cheatpack_detect.o ModuleFactory.o Patcher.o Revelation.o
+PROGS = Revelation.mixtape
+ifeq ($(NPROCS),)
+NPROCS = 8
+all:
+	$(MAKE) -j$(NPROCS) NPROCS=$(NPROCS)
+else
+all: $(OBJS) $(PROGS)
+	copy /y Revelation.mixtape "E:/Games/Warcraft III/Revelation.mixtape"
 
 clean:
-	rm -f $(OBJS) $(COBJS) $(PROGS)
+	rm $(OBJS) $(PROGS)
 
 $(OBJS): %.o: %.cpp
 	$(C++) -o $@ $(CFLAGS) -c $<
 
-./Revelation.mixtape: $(OBJS) $(COBJS)
+Revelation.mixtape: $(OBJS)
+	$(C++) $(CFLAGS) -shared -o Revelation.mixtape $(OBJS) $(COBJS) $(LFLAGS)
 
-all: $(PROGS)
-
-cmd_jvars.o: cmd_jvars.cpp
-cmd_strings.o:
-Config.o:
-DllMain.o: 
-Game.o: 
-JASS.o: 
-MHDetect.o: 
-mod_cheatpack_detect.o: 
-ModuleFactory.o: 
-Patcher.o: 
-Revelation.o: 
+endif

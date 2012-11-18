@@ -37,10 +37,10 @@ CRevelation::~CRevelation() {
 }
 
 string CRevelation::GetLogPath() {
-  char g_szLocalPath[MAX_PATH] = { NULL };
-  GetModuleFileName(GetModuleHandle(0), g_szLocalPath, MAX_PATH);
-  PathRemoveFileSpecA(g_szLocalPath);
-  strcat(g_szLocalPath, "\\");
+  string g_szLocalPath;
+  GetModuleFileName(GetModuleHandle(0), &g_szLocalPath[0], MAX_PATH);
+  boost::filesystem::path p(g_szLocalPath);
+  g_szLocalPath = p.parent_path().string() + '\\';
 
   CConfig cfg;
   string config_path = g_szLocalPath + string("revelation.cfg");
