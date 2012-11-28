@@ -1,25 +1,23 @@
-C++ = clang++
-DFLAGS = 
-LFLAGS = -L. -LD:/libs/boost/stage/lib -lboost_filesystem-mgw46-mt-1_51 -lboost_system-mgw46-mt-1_51
-CFLAGS = -O3 -ID:/libs/boost/
-
-OBJS = cmd_jvars.o cmd_strings.o Config.o Detour/CDetour.o Detour/CDetourDis.o DllMain.o Game.o JASS.o MHDetect.o mod_cheatpack_detect.o ModuleFactory.o Patcher.o Revelation.o
+C++ = clang
+DFLAGS = -DCLANG
+LFLAGS = -L.
+CFLAGS = -Wno-invalid-token-paste -g0 -emit-llvm -O3 -ID:/libs/boost/ $(DFLAGS)
+SRCS = $(wildcard *.cpp) $(wildcard Detour/*.cpp) 
+OBJS = $(patsubst %.cpp,%.o,$(SRCS))
 PROGS = Revelation.mixtape
-ifeq ($(NPROCS),)
-NPROCS = 8
-all:
-	$(MAKE) -j$(NPROCS) NPROCS=$(NPROCS)
-else
+
 all: $(OBJS) $(PROGS)
-	copy /y Revelation.mixtape "E:/Games/Warcraft III/Revelation.mixtape"
-
-clean:
-	rm $(OBJS) $(PROGS)
-
+#	upx Revelation.mixtape
+#	copy /y Revelation.mixtape "E:/Games/Warcraft III/Revelation.mixtape"
+	
 $(OBJS): %.o: %.cpp
-	$(C++) -o $@ $(CFLAGS) -c $<
-
+	$(C++) $(CFLAGS) -o $@ -c $<
+		
 Revelation.mixtape: $(OBJS)
-	$(C++) $(CFLAGS) -shared -o Revelation.mixtape $(OBJS) $(COBJS) $(LFLAGS)
+	llvm-link $(OBJS) -o revelation.bc
+	llc -filetype=obj revelation.bc -o revelation.obj
+#	$(C++) $(CFLAGS) -s -Wl,--version-script=exports.version -Wl,--subsystem,windows -shared -o $(PROGS) out/asm.s $(LFLAGS)
+#-Wl,--gc-sections,--print-gc-sections 
 
-endif
+
+#link revelation.obj /DLL /OUT:"D:\dev\Revelation\Release\Revelation.dll" msvcrt.lib libcmt.lib /NOLOGO /DYNAMICBASE /MACHINE:X86 /DLL /LIBPATH:"D:\libs\boost\stage\lib" /LIBPATH:"E:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\lib" /LIBPATH:"E:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\atlmfc\lib" /LIBPATH:"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\lib" /LIBPATH:"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\\lib"

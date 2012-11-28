@@ -25,8 +25,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v90</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v100</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -91,7 +90,7 @@
       </MergeSections>
     </Link>
     <PostBuildEvent>
-      <Command>cp "$(TargetPath)" "E:\Games\Warcraft III\$(TargetName).mixtape"</Command>
+      <Command>copy /y "$(TargetPath)" "E:\Games\Warcraft III\$(TargetName).mixtape"</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copying to WC3 Folder</Message>

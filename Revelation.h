@@ -13,10 +13,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <shlwapi.h>
 #include <boost/format.hpp>
-#include <boost/typeof/typeof.hpp>
-#include <boost/filesystem.hpp>
 
 using namespace std;
 using boost::format;
@@ -39,10 +36,6 @@ public:
   static void Log(boost::basic_format<char> fmt) { Log(fmt.str()); }
 
   CGame *m_Game;
-
-private:
-  static string m_LogFile;
-  static bool m_LogInitialized;
 };
 
 extern CRevelation *g_Revelation;

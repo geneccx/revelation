@@ -44,7 +44,7 @@ function blub(form)
 
 	finallen = s1.length+1;
 
-	hexsequence = '"';
+	hexsequence = '&"';
 	xvalue = xvaluestart;
 	for(i=0;i<s1.length;i++)
 	{ 
@@ -72,7 +72,7 @@ function blub(form)
 		xvalue %= 256;
 		hexsequence += "\\x"+ Dec2Hex(chval);
 	}
-	hexsequence += '"';
+	hexsequence += '"[0]';
 	
 	s2  = "/*"+s1+"*/XorStr<0x" + Dec2Hex(xvaluestart) + ","  + finallen + ","+xrefkill+'>('
 	s2 += hexsequence + "+" + xrefkill + ").s";
